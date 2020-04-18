@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Search
+{% endblock %}
+
+{% block main %}
+<p>For Joker Games try numbers from 1 to 2116
+    <br>For Lotto & Proto Games try numbers from 1 to 2105</p>
+<form action="/search" method="post">
+    <div class="form-group">
+        <select class="form-control" name="game_id">
+            <option value="5104">Joker</option>
+            <option value="5103">Lotto</option>
+            <option value="2101">Proto</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" name="game" placeholder="Game" type="text" required>
+    </div>
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
+<div>
+    <h5>
+        {% if draw %}
+        <br>
+        {% if draw['game'] == 5104 %}
+        Joker -
+        {% elif draw['game'] == 5103 %}
+        Lotto -
+        {% else %}
+        Proto -
+        {% endif %}
+        Draw ID: {{ draw['game_id'] }}</h5>
+    <span>Winning Numbers:</span>
+    <h3>
+        {% for number in draw['numbers']['list'] %}
+        {{ number }}
+        {% endfor %}
+        {% if draw['game'] == 5104 or (draw['game'] == 5103 and draw['game_id'] > 647) %}
+        + {{ draw['numbers']['bonus'][0] }}
+        {% endif %}
+    </h3>
+    <div class="table-responsive table-hover">
+        <table class="table">
+            <caption>Draw Time in GMT: {{ draw['drawTime'] }} <br> Draw ID: {{ draw['game_id'] }} <br>Players:
+                {{  draw['players']  }}
+            </caption>
+            <thead>
+                <tr>
+                    <th scope="col">Prize Fund</th>
+                    <th scope="col">Winners</th>
+                    <th scope="col">Shares</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in draw['prizes'] %}
+                <tr>
+                    <td>{{ category['jackpot']|eur }}</td>
+                    <td>{{ category['winners'] }}</td>
+                    <td>{{ category['divident']|eur }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

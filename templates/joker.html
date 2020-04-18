@@ -1,0 +1,140 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Joker
+{% endblock %}
+
+{% block main %}
+<h2>Joker</h2>
+<div class="container">
+    <p>For information about how to play Joker, click the button below.</p>
+    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#play">How to Play</button>
+    <div id="play" class="collapse border">
+        The goal of Joker is to correctly guess 5 unique numbers from a field of 45 numbers plus a JOKER number from a
+        second field of 20 numbers.
+        <br>
+        There are 3 draws every week, on Tuesday, Thursday and Sunday at 19:00 GMT.
+        <br>
+        Participation closes 1 hour before the draw.
+        <br>
+        Each form submission costs 0.5 €.
+    </div>
+</div>
+<br>
+<div class="container">
+    <p>For the winning conditions, click the button below.</p>
+    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#win">Winning Conditions</button>
+    <div id="win" class="collapse border">
+        <div class="table-responsive table-hover">
+            There are 8 winning categories in Joker, depending on how many of your numbers match the drawn numbers.
+            <table class="table">
+                <caption>* The earnings of categories "5+1" and "5" are based on the number of participants and are
+                    divided among the winners of the category.
+                    <br>If there are no winners, the prizes are added to the next draw.</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Matches</th>
+                        <th scope="col">Winnings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>5 + 1</td>
+                        <td>*</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>*</td>
+                    </tr>
+                    <tr>
+                        <td>4 + 1</td>
+                        <td>2,500.00 €</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>50.00 €</td>
+                    </tr>
+                    <tr>
+                        <td>3 + 1</td>
+                        <td>50.00 €</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2.00 €</td>
+                    </tr>
+                    <tr>
+                        <td>2 + 1</td>
+                        <td>2.00 €</td>
+                    </tr>
+                    <tr>
+                        <td>1 + 1</td>
+                        <td>1.50 €</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<br><br>
+<h4>Play</h4>
+<form action="/joker" method="post">
+    <div class="form-group">
+        <input class="form-control" min="1" max="45" name="first" placeholder="1st" type="number" required>
+        <input class="form-control" min="1" max="45" name="second" placeholder="2nd" type="number" required>
+        <input class="form-control" min="1" max="45" name="third" placeholder="3rd" type="number" required>
+        <input class="form-control" min="1" max="45" name="fourth" placeholder="4th" type="number" required>
+        <input class="form-control" min="1" max="45" name="fifth" placeholder="5th" type="number" required>
+        <input class="form-control" min="1" max="20" name="joker" placeholder="Joker" type="number" required>
+    </div>
+    <button class="btn btn-primary" type="submit">Play 0.5 €</button>
+</form>
+
+<br><br>
+
+<div>
+    <h5>You can also view the results of the last draw below: </h5>
+    <br>
+    {% if draw %}
+    <span>Winning Numbers:</span>
+    <h3>
+        {% for number in draw['numbers']['list'] %}
+        {{ number }}
+        {% endfor %} +
+        {{ draw['numbers']['bonus'][0] }}
+    </h3>
+    <div class="table-responsive table-hover">
+        <table class="table">
+            <caption>Draw Time in GMT: {{ draw['drawTime'] }} <br> Draw ID: {{ draw['game_id'] }} <br>Players:
+                {{  draw['players']  }}
+            </caption>
+            <thead>
+                <tr>
+                    <th scope="col">Prize Fund</th>
+                    <th scope="col">Winners</th>
+                    <th scope="col">Shares</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in draw['prizes'] %}
+                <tr>
+                    <td>{{ category['jackpot']|eur }}</td>
+                    <td>{{ category['winners'] }}</td>
+                    <td>{{ category['divident']|eur }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <form action="/refreshJoker" method="get">
+        <button class="btn btn-secondary" type="submit">Refresh</button>
+    </form>
+    {% else %}
+    <form action="/refreshJoker" method="get">
+        <button class="btn btn-success" type="submit">Show Last Draw</button>
+    </form>
+    {% endif %}
+</div>
+
+
+{% endblock %}

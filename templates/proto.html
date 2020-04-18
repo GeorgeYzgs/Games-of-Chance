@@ -1,0 +1,140 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Proto
+{% endblock %}
+
+{% block main %}
+<h2>Proto</h2>
+<div class="container">
+    <p>For information about how to play Proto, click the button below.</p>
+    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#play">How to Play</button>
+    <div id="play" class="collapse border">
+        The goal of Lotto is to correctly guess a sequence of 7 numbers from 0 to 9. Your sequence must match either the
+        first or the last numbers.
+        <br>
+        There are 3 draws every week, on Thursday and Sunday at 20:00 GMT.
+        <br>
+        Participation closes 1 hour before the draw.
+        <br>
+        Each form submission costs 0.5 €.
+    </div>
+</div>
+<br>
+<div class="container">
+    <p>For the winning conditions, click the button below.</p>
+    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#win">Winning Conditions</button>
+    <div id="win" class="collapse border">
+        <div class="table-responsive table-hover">
+            There are 6 winning categories in Proto, depending on how many of your numbers match either the starting or
+            ending numbers.
+            <table class="table">
+                <caption>* The earnings of the Jackpot category are based on the number of participants and are
+                    divided among the winners of the category.
+                    <br>If there are no winners, the prizes are added to the next draw.</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Matches</th>
+                        <th scope="col">Winnings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Full Match</td>
+                        <td>*</td>
+                    </tr>
+                    <tr>
+                        <td>First 6 OR last 6 numbers match</td>
+                        <td>25,000.00 €</td>
+                    </tr>
+                    <tr>
+                        <td>First 5 OR last 5 numbers match</td>
+                        <td>2,500.00 €</td>
+                    </tr>
+                    <tr>
+                        <td>First 4 OR last 4 numbers match</td>
+                        <td>250.00 €</td>
+                    </tr>
+                    <tr>
+                        <td>First 3 OR last 3 numbers match</td>
+                        <td>25.0 €</td>
+                    </tr>
+                    <tr>
+                        <td>First 2 OR last 2 numbers match</td>
+                        <td>2.0 €</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<br><br>
+<h4>Play</h4>
+<form action="/proto" method="post">
+    <div class="form-group">
+        <input class="form-control" min="0" max="9" name="first" placeholder="1st" type="number" required
+            pattern="(?!0+)\d+">
+        <input class="form-control" min="0" max="9" name="second" placeholder="2nd" type="number" required
+            pattern="(?!0+)\d+">
+        <input class="form-control" min="0" max="9" name="third" placeholder="3rd" type="number" required
+            pattern="(?!0+)\d+">
+        <input class="form-control" min="0" max="9" name="fourth" placeholder="4th" type="number" required
+            pattern="(?!0+)\d+">
+        <input class="form-control" min="0" max="9" name="fifth" placeholder="5th" type="number" required
+            pattern="(?!0+)\d+">
+        <input class="form-control" min="0" max="9" name="sixth" placeholder="6th" type="number" required
+            pattern="(?!0+)\d+">
+        <input class="form-control" min="0" max="9" name="seventh" placeholder="7th" type="number" required
+            pattern="(?!0+)\d+">
+    </div>
+    <button class="btn btn-primary" type="submit">Play 0.5 €</button>
+</form>
+
+<br><br>
+
+<div>
+    <h5>You can also view the results of the last draw below: </h5>
+    <br>
+    {% if draw %}
+    <span>Winning Numbers:</span>
+    <h3>
+        {% for number in draw['numbers']['list'] %}
+        {{ number }}
+        {% endfor %}
+    </h3>
+    <div class="table-responsive table-hover">
+        <table class="table">
+            <caption>Draw Time in GMT: {{ draw['drawTime'] }} <br> Draw ID: {{ draw['game_id'] }} <br>Players:
+                {{  draw['players']  }}
+            </caption>
+            <thead>
+                <tr>
+                    <th scope="col">Prize Fund</th>
+                    <th scope="col">Winners</th>
+                    <th scope="col">Shares</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in draw['prizes'] %}
+                <tr>
+                    <td>{{ category['jackpot']|eur }}</td>
+                    <td>{{ category['winners'] }}</td>
+                    <td>{{ category['divident']|eur }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <form action="/refreshProto" method="get">
+        <button class="btn btn-secondary" type="submit">Refresh</button>
+    </form>
+    {% else %}
+    <form action="/refreshProto" method="get">
+        <button class="btn btn-success" type="submit">Show Last Draw</button>
+    </form>
+    {% endif %}
+</div>
+
+
+{% endblock %}

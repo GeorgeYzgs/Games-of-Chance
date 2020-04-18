@@ -1,0 +1,45 @@
+
+{% extends "layout.html" %}
+
+{% block title %}
+History
+{% endblock %}
+
+{% block main %}
+<div>
+    {% if games %}
+    <h5>Former game history: </h5>
+    <br>
+    <div class="table-responsive table-hover">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Draw ID</th>
+                    <th scope="col">Game</th>
+                    <th scope="col">Numbers</th>
+                    <th scope="col">Time of Submission</th>
+                    <th scope="col">Draw Time</th>
+                    <th scope="col">Earnings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr>
+                    <td>{{ game['game_id'] }}</td>
+                    <td>{{ game['game'] }}</td>
+                    <td>{{ game['numbers'] }}</td>
+                    <td>{{ game['timestamp'] }}</td>
+                    <td>{{ game['draw_time'] }}</td>
+                    <td>{{ game['earnings']|eur }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <h4>Your history is empty!</h4>
+    {% endif %}
+</div>
+
+
+{% endblock %}
